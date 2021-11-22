@@ -1,23 +1,52 @@
-import { GoogleDLPRedactor, AsyncRedactor, SyncRedactor } from '../src';
+import { AsyncRedactor, SyncRedactor } from '../src';
 
 const redactor = new SyncRedactor();
-const compositeRedactorWithDLP = new AsyncRedactor({
+const compositeRedactorWithCustomAsyncRedactor = new AsyncRedactor({
   customRedactors: {
-    after: [new GoogleDLPRedactor()]
+    before: [
+      {
+        regexpPattern: /\bClifford\b/gi,
+        replaceWith: 'LAST_NAME'
+      }
+    ],
+    after: [
+      {
+        regexpPattern: /我的卡号/gi,
+        replaceWith: 'PERSON_NAME'
+      },
+      {
+        regexpPattern: /\bCliff\b/gi,
+        replaceWith: 'PERSON_NAME'
+      },
+      {
+        regexpPattern: /\bNew York\b/g,
+        replaceWith: 'US_STATE'
+      },
+      {
+        regexpPattern: /\b[A-Z]{2}\b/g,
+        replaceWith: 'LOCATION'
+      },
+      {
+        regexpPattern: /\b\d{4,5}\b/gi,
+        replaceWith: 'ZIPCODE'
+      },
+      {
+        regexpPattern: /\b\d{3}-\d{3}-\d{3}\b/gi,
+        replaceWith: 'PHONE_NUMBER'
+      }
+    ]
   }
 });
 
 describe('index.js', function() {
-  const runGoogleDLPTests = !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
-
   type InputAssertionTuple = [string, string, string?];
 
   function TestCase(description: string, thingsToTest: Array<InputAssertionTuple>) {
     it(description, async () => {
-      for (const [input, syncOutput, googleDLPOutput] of thingsToTest) {
+      for (const [input, syncOutput, asyncOutput] of thingsToTest) {
         expect(redactor.redact(input)).toBe(syncOutput);
-        if (runGoogleDLPTests && googleDLPOutput) {
-          await expect(compositeRedactorWithDLP.redactAsync(input)).resolves.toBe(googleDLPOutput);
+        if (asyncOutput) {
+          await expect(compositeRedactorWithCustomAsyncRedactor.redactAsync(input)).resolves.toBe(asyncOutput);
         }
       }
     });
@@ -25,10 +54,10 @@ describe('index.js', function() {
 
   TestCase.only = function(description: string, thingsToTest: Array<InputAssertionTuple>) {
     it.only(description, async () => {
-      for (const [input, syncOutput, googleDLPOutput] of thingsToTest) {
+      for (const [input, syncOutput, asyncOutput] of thingsToTest) {
         expect(redactor.redact(input)).toBe(syncOutput);
-        if (googleDLPOutput) {
-          await expect(compositeRedactorWithDLP.redactAsync(input)).resolves.toBe(googleDLPOutput);
+        if (asyncOutput) {
+          await expect(compositeRedactorWithCustomAsyncRedactor.redactAsync(input)).resolves.toBe(asyncOutput);
         }
       }
     });
@@ -212,12 +241,11 @@ describe('index.js', function() {
     ['My homepage is http://example.com\nAnd that is that.', 'My homepage is URL\nAnd that is that.']
   ]);
 
-  runGoogleDLPTests &&
-    it('[integration] should redact non english text', async function() {
-      await expect(compositeRedactorWithDLP.redactAsync('我的名字是王')).resolves.toBe('我的名字是王');
-      await expect(compositeRedactorWithDLP.redactAsync('我的卡号是 1234')).resolves.toBe('PERSON_NAME是 DIGITS');
-      await expect(compositeRedactorWithDLP.redactAsync('我的电话是 444-332-343')).resolves.toBe(
-        '我的电话是 PHONE_NUMBER'
-      );
-    });
+  it('runs custom async redactor', async function() {
+    await expect(compositeRedactorWithCustomAsyncRedactor.redactAsync('我的名字是王')).resolves.toBe('我的名字是王');
+    await expect(compositeRedactorWithCustomAsyncRedactor.redactAsync('我的卡号是 1234')).resolves.toBe('PERSON_NAME是 DIGITS');
+    await expect(compositeRedactorWithCustomAsyncRedactor.redactAsync('我的电话是 444-332-343')).resolves.toBe(
+      '我的电话是 PHONE_NUMBER'
+    );
+  });
 });
