@@ -4,12 +4,17 @@ jobs:
   install:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: install
-      uses: actions/npm@1.0.0
+    - uses: actions/checkout@v2
+
+    - name: Setup Node 14
+      uses: actions/setup-node@v2
       with:
-        args: ci
-    - name: verify_all
-      uses: actions/npm@1.0.0
-      with:
-        args: run verify_all
+        node-version: '14'
+
+    - name: Install Dependencies
+      run: |
+        npm install -g npm@8.1.4
+        npm ci
+
+    - name: Run npm verify_all
+      run: npm run verify_all
