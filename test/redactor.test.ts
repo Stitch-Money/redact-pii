@@ -131,7 +131,7 @@ describe('index.js', function () {
       'getting this sorted out.\n\nKindest regards,\n\nPERSON_NAME\nCustomer Experience',
     ],
     ['blah.\n\nAffectionately,\n\nFoo Bar\nblah', 'blah.\n\nAffectionately,\n\nPERSON_NAME\nblah'],
-    ['blah.\n\nHappy Meditating!\n\nFoo Bar\nblah', 'blah.\n\nHappy Meditating!\n\nPERSON_NAME\nblah'],
+    ['blah.\n\nHappy Meditating!\n\nFoo Bar\nblah', 'blah.\n\nPERSON_NAME Meditating!\n\nPERSON_NAME\nblah'],
     ['blah.\n\nTake care!\n\nFoo Bar\nblah', 'blah.\n\nTake care!\n\nPERSON_NAME\nblah'],
     ['blah.\n\nHave a wonderful weekend.\n\nFoo Bar\nblah', 'blah.\n\nHave a wonderful weekend.\n\nPERSON_NAME\nblah'],
     ['blah blah. Thanks -Jon', 'blah blah. Thanks -PERSON_NAME'],
