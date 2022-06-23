@@ -228,8 +228,8 @@ describe('index.js', function () {
       globalReplaceWith: 'REDACTED',
       replaceWithBorder: {
         before: '*^*',
-        after: '*-*'
-      }
+        after: '*-*',
+      },
     });
     expect(customRedactor.redact('my ip: 10.1.1.235.')).toBe('my ip: *^*REDACTED*-*.');
   });
