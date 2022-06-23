@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Changelog
 
+# [4.2.0][] - 2022-06-23
+- Add option to add text before and after the regex redaction replacement
+
+# [4.1.0][] - 2022-06-06
+- Add more first and last names to the name regex from South Africa and Nigeria
+
 ## [4.0.0][] - 2021-11-22
 - Remove @google-cloud/dlp dependency
 - Upgrade all remaining dependency versions
@@ -45,6 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
 
 [Unreleased]: https://github.com/solvvy/redact-pii/compare/v4.0.0...HEAD
+[4.2.0]: https://github.com/solvvy/redact-pii/compare/v4.1.0...v4.2.0
+[4.1.0]: https://github.com/solvvy/redact-pii/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/solvvy/redact-pii/compare/v3.2.3...v4.0.0
 [3.2.3]: https://github.com/solvvy/redact-pii/compare/v3.2.2...v3.2.3
 [3.2.2]: https://github.com/solvvy/redact-pii/compare/v3.2.1...v3.2.2
