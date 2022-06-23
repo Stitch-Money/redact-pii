@@ -35,18 +35,10 @@ export function composeChildRedactors<T extends AsyncCustomRedactorConfig>(opts:
       !(opts.builtInRedactors as any)[regexpName] ||
       (opts.builtInRedactors as any)[regexpName].enabled !== false
     ) {
-      let replaceText = opts.globalReplaceWith || snakeCase(regexpName).toUpperCase();
-
-      if (opts.replaceWithBorder) {
-        const beforeBorder = opts.replaceWithBorder.before ?? '';
-        const afterBorder = opts.replaceWithBorder.after ?? '';
-        replaceText = `${beforeBorder}${replaceText}${afterBorder}`;
-      }
-
       childRedactors.push(
         new SimpleRegexpRedactor({
           regexpPattern: (simpleRegexpBuiltIns as any)[regexpName],
-          replaceWith: replaceText,
+          replaceWith: opts.globalReplaceWith || snakeCase(regexpName).toUpperCase(),
         })
       );
     }

@@ -213,6 +213,27 @@ describe('index.js', function () {
     expect(customRedactor.redact('my ip: 10.1.1.235.')).toBe('my ip: REDACTED.');
   });
 
+  it('should respect a custom replaceWithBorder before and globalReplaceWith', function () {
+    let customRedactor = new SyncRedactor({ globalReplaceWith: 'REDACTED', replaceWithBorder: { before: '***' } });
+    expect(customRedactor.redact('my ip: 10.1.1.235.')).toBe('my ip: ***REDACTED.');
+  });
+
+  it('should respect a custom replaceWithBorder after and globalReplaceWith', function () {
+    let customRedactor = new SyncRedactor({ globalReplaceWith: 'REDACTED', replaceWithBorder: { after: '***' } });
+    expect(customRedactor.redact('my ip: 10.1.1.235.')).toBe('my ip: REDACTED***.');
+  });
+
+  it('should respect a custom replaceWithBorder before & after and globalReplaceWith', function () {
+    let customRedactor = new SyncRedactor({
+      globalReplaceWith: 'REDACTED',
+      replaceWithBorder: {
+        before: '*^*',
+        after: '*-*'
+      }
+    });
+    expect(customRedactor.redact('my ip: 10.1.1.235.')).toBe('my ip: *^*REDACTED*-*.');
+  });
+
   it('should accept new patterns', function () {
     let redactor = new SyncRedactor({
       customRedactors: { after: [{ regexpPattern: /\b(cat|dog|cow)s?\b/gi, replaceWith: 'ANIMAL' }] },

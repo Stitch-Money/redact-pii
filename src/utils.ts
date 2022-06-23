@@ -1,4 +1,10 @@
-import { SimpleRegexpCustomRedactorConfig, AsyncCustomRedactorConfig, ISyncRedactor, IRedactor } from './types';
+import {
+  SimpleRegexpCustomRedactorConfig,
+  AsyncCustomRedactorConfig,
+  ISyncRedactor,
+  IRedactor,
+  CompositeRedactorOptions
+} from './types';
 
 export function isSimpleRegexpCustomRedactorConfig(
   redactor: AsyncCustomRedactorConfig
@@ -8,4 +14,15 @@ export function isSimpleRegexpCustomRedactorConfig(
 
 export function isSyncRedactor(redactor: IRedactor): redactor is ISyncRedactor {
   return typeof (redactor as ISyncRedactor).redact === 'function';
+}
+
+export function addReplaceWithBorders<T extends AsyncCustomRedactorConfig>(replaceWith: string, replaceWithBorder: CompositeRedactorOptions<T>['replaceWithBorder']): string {
+  if (!replaceWithBorder) {
+    return replaceWith;
+  }
+
+  const before = replaceWithBorder.before ?? '';
+  const after = replaceWithBorder.after ?? '';
+
+  return `${before}${replaceWith}${after}`;
 }
