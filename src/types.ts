@@ -21,6 +21,10 @@ export type AsyncCustomRedactorConfig = SyncCustomRedactorConfig | IAsyncRedacto
 
 export interface CompositeRedactorOptions<T extends AsyncCustomRedactorConfig> {
   globalReplaceWith?: string;
+  replaceWithBorder?: {
+    before: string;
+    after: string;
+  };
   builtInRedactors?: {
     [RedactorName in keyof typeof simpleRegexpBuiltIns | 'names']?: {
       enabled?: boolean;
