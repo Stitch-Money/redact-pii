@@ -1,5 +1,6 @@
-import { ISyncRedactor } from '../types';
+import { AsyncCustomRedactorConfig, CompositeRedactorOptions, ISyncRedactor } from '../types';
 import { snakeCase } from 'lodash';
+import { addReplaceWithBorders } from '../utils';
 
 export class SimpleRegexpRedactor implements ISyncRedactor {
   regexpMatcher: RegExp;
@@ -16,7 +17,9 @@ export class SimpleRegexpRedactor implements ISyncRedactor {
     this.regexpMatcher = regexpMatcher;
   }
 
-  redact(textToRedact: string) {
-    return textToRedact.replace(this.regexpMatcher, this.replaceWith);
+  redact(textToRedact: string, opts: CompositeRedactorOptions<AsyncCustomRedactorConfig>) {
+    const replaceText = addReplaceWithBorders(this.replaceWith, opts.replaceWithBorder);
+
+    return textToRedact.replace(this.regexpMatcher, replaceText);
   }
 }

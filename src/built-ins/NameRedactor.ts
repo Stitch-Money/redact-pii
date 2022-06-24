@@ -1,5 +1,6 @@
-import { ISyncRedactor } from '../types';
+import { CompositeRedactorOptions, ISyncRedactor, SyncCustomRedactorConfig } from '../types';
 import * as _wellKnownNames from './well-known-names.json';
+import { addReplaceWithBorders } from '../utils';
 
 const greetingRegex = /(^|\.\s+)(dear|hi|hello|greetings|hey|hey there)/gi;
 const closingRegex =
@@ -16,7 +17,9 @@ const wellKnownNames = new RegExp('\\b(\\s*)(\\s*(' + _wellKnownNames.join('|') 
 export class NameRedactor implements ISyncRedactor {
   constructor(private replaceWith = 'PERSON_NAME') {}
 
-  redact(textToRedact: string) {
+  redact(textToRedact: string, opts: CompositeRedactorOptions<SyncCustomRedactorConfig>) {
+    let replaceText = addReplaceWithBorders(this.replaceWith, opts.replaceWithBorder);
+
     greetingOrClosing.lastIndex = 0;
     genericName.lastIndex = 0;
     let greetingOrClosingMatch = greetingOrClosing.exec(textToRedact);
@@ -27,14 +30,14 @@ export class NameRedactor implements ISyncRedactor {
         let suffix = genericNameMatch[5] === null ? '' : genericNameMatch[5];
         textToRedact =
           textToRedact.slice(0, genericNameMatch.index) +
-          this.replaceWith +
+          replaceText +
           suffix +
           textToRedact.slice(genericNameMatch.index + genericNameMatch[0].length);
       }
       greetingOrClosingMatch = greetingOrClosing.exec(textToRedact);
     }
 
-    textToRedact = textToRedact.replace(wellKnownNames, '$1' + this.replaceWith);
+    textToRedact = textToRedact.replace(wellKnownNames, '$1' + replaceText);
 
     return textToRedact;
   }
